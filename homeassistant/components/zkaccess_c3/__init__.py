@@ -90,7 +90,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
 
     c3_coordinator = C3Coordinator(
         hass,
-        config_entry.entry_id,
+        config_entry,
         config_entry.data[CONF_HOST],
         config_entry.data[CONF_PORT],
     )

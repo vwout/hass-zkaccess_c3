@@ -13,7 +13,7 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DATA_C3_COORDINATOR, DEFAULT_AUX_ON_DURATION, DOMAIN
+from .const import DATA_C3_COORDINATOR, DOMAIN
 
 
 async def async_setup_entry(
@@ -40,7 +40,6 @@ class C3AuxOutEntity(CoordinatorEntity, SwitchEntity):
         super().__init__(coordinator, context=idx)
         self._coordinator = coordinator
         self._idx = idx
-        self._attr_extra_state_attributes = {"aux_on_duration": DEFAULT_AUX_ON_DURATION}
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -53,17 +52,17 @@ class C3AuxOutEntity(CoordinatorEntity, SwitchEntity):
         self.async_write_ha_state()
 
     @property
-    def name(self):
+    def name(self) -> str | None:
         """Return the display name of this entity."""
         return f"Auxiliary Output {self._idx}"
 
     @property
-    def should_poll(self):
+    def should_poll(self) -> bool:
         """Disable polling, the C3 coordinator polls."""
         return False
 
     @property
-    def unique_id(self):
+    def unique_id(self) -> str | None:
         """Get unique ID."""
         return f"{self._coordinator.c3_panel.serial_number}-out{self._idx}"
 
@@ -77,11 +76,11 @@ class C3AuxOutEntity(CoordinatorEntity, SwitchEntity):
         control_command = ControlDeviceOutput(
             self._idx,
             ControlOutputAddress.AUX_OUTPUT,
-            self._attr_extra_state_attributes["aux_on_duration"],
+            self._coordinator.aux_on_duration,
         )
         self._coordinator.c3_panel.control_device(control_command)
 
-    def turn_off(self, **kwargs):
+    def turn_off(self, **kwargs: Any) -> None:
         """Deactivate the auxiliary output."""
         control_command = ControlDeviceOutput(
             self._idx, ControlOutputAddress.AUX_OUTPUT, 0

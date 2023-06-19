@@ -26,5 +26,17 @@
       "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
       "no_devices_found": "[%key:common::config_flow::abort::no_devices_found%]"
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "C3 panel options",
+        "data": {
+          "scan_interval": "Poll interval to get C3 panel status (seconds)",
+          "unlock_duration": "Duration of unlock activation (seconds)",
+          "aux_on_duration": "Duration of auxiliary output activation (seconds)"
+        }
+      }
+    }
   }
 }

@@ -13,7 +13,7 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DATA_C3_COORDINATOR, DEFAULT_UNLOCK_DURATION, DOMAIN
+from .const import DATA_C3_COORDINATOR, DOMAIN
 from .coordinator import C3Coordinator
 
 
@@ -47,7 +47,6 @@ class C3LockEntity(CoordinatorEntity, LockEntity):
         self._attr_is_locking = None
         self._attr_is_unlocking = None
         self._attr_is_jammed = None
-        self._attr_extra_state_attributes = {"unlock_duration": DEFAULT_UNLOCK_DURATION}
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -98,7 +97,7 @@ class C3LockEntity(CoordinatorEntity, LockEntity):
         control_command = ControlDeviceOutput(
             self._idx,
             ControlOutputAddress.DOOR_OUTPUT,
-            self._attr_extra_state_attributes["unlock_duration"],
+            self._coordinator.unlock_duration,
         )
         self._coordinator.c3_panel.control_device(control_command)
         self._attr_is_unlocking = True

@@ -4,20 +4,30 @@ import logging
 
 from c3 import C3, rtlog
 
-from homeassistant.const import Platform
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CONF_SCAN_INTERVAL, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .const import DATA_C3_COORDINATOR, DEFAULT_POLL_INTERVAL, DOMAIN
+from .const import (
+    CONF_AUX_ON_DURATION,
+    CONF_UNLOCK_DURATION,
+    DATA_C3_COORDINATOR,
+    DEFAULT_AUX_ON_DURATION,
+    DEFAULT_POLL_INTERVAL,
+    DEFAULT_UNLOCK_DURATION,
+    DOMAIN,
+)
 
 _LOGGER = logging.getLogger(__name__)
-SCAN_INTERVAL = timedelta(seconds=DEFAULT_POLL_INTERVAL)
 
 
 class C3Coordinator(DataUpdateCoordinator):
     """ZKAccess C3 panel coordinator."""
 
-    def __init__(self, hass: HomeAssistant, entry_id, host: str, port: int) -> None:
+    def __init__(
+        self, hass: HomeAssistant, config_entry: ConfigEntry, host: str, port: int
+    ) -> None:
         """Initialize C3 coordinator."""
         super().__init__(
             hass,
@@ -25,11 +35,24 @@ class C3Coordinator(DataUpdateCoordinator):
             # Name of the data. For logging purposes.
             name=f"Zkaccess C3 @ {host}:{port}",
             # Polling interval. Will only be polled if there are subscribers.
-            update_interval=SCAN_INTERVAL,
+            update_interval=timedelta(
+                seconds=config_entry.options.get(CONF_SCAN_INTERVAL)
+                or DEFAULT_POLL_INTERVAL
+            ),
         )
 
-        self._entry_id = entry_id
+        self._entry_id = config_entry.entry_id
         self._status = rtlog.DoorAlarmStatusRecord()
+        self.unlock_duration = (
+            config_entry.options.get(CONF_UNLOCK_DURATION) or DEFAULT_UNLOCK_DURATION
+        )
+        self.aux_on_duration = (
+            config_entry.options.get(CONF_AUX_ON_DURATION) or DEFAULT_AUX_ON_DURATION
+        )
+
+        config_entry.async_on_unload(
+            config_entry.add_update_listener(self._update_options_listener)
+        )
 
         self.c3_panel: C3 = C3(host, port)
         if self.c3_panel.connect():
@@ -58,6 +81,21 @@ class C3Coordinator(DataUpdateCoordinator):
     def status(self) -> rtlog.DoorAlarmStatusRecord:
         """Return the last received Door/Alarm status."""
         return self._status
+
+    async def _update_options_listener(
+        self, hass: HomeAssistant, config_entry: ConfigEntry
+    ):
+        """Handle options update."""
+        self.update_interval = timedelta(
+            seconds=config_entry.options.get(CONF_SCAN_INTERVAL)
+            or DEFAULT_POLL_INTERVAL
+        )
+        self.unlock_duration = (
+            config_entry.options.get(CONF_UNLOCK_DURATION) or DEFAULT_UNLOCK_DURATION
+        )
+        self.aux_on_duration = (
+            config_entry.options.get(CONF_AUX_ON_DURATION) or DEFAULT_AUX_ON_DURATION
+        )
 
     async def _async_update_data(self):
         """Fetch data from API endpoint."""

@@ -8,13 +8,21 @@ import voluptuous as vol
 
 from homeassistant import config_entries
 from homeassistant.components import network
-from homeassistant.const import CONF_HOST, CONF_NAME, CONF_PORT
-from homeassistant.core import HomeAssistant
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CONF_HOST, CONF_NAME, CONF_PORT, CONF_SCAN_INTERVAL
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import config_validation as cv
 
-from .const import DOMAIN
+from .const import (
+    CONF_AUX_ON_DURATION,
+    CONF_UNLOCK_DURATION,
+    DEFAULT_AUX_ON_DURATION,
+    DEFAULT_POLL_INTERVAL,
+    DEFAULT_UNLOCK_DURATION,
+    DOMAIN,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -49,10 +57,58 @@ async def _async_has_devices(hass: HomeAssistant) -> bool:
 # config_entry_flow.register_discovery_flow(DOMAIN, "C3", _async_has_devices)
 
 
+class C3OptionsFlow(config_entries.OptionsFlow):
+    """Handle configuration options for the C3 panel."""
+
+    def __init__(self, config_entry: ConfigEntry) -> None:
+        """Init object."""
+        self.config_entry = config_entry
+
+    async def async_step_init(
+        self,
+        user_input: dict[str, str] | None = None,
+    ) -> FlowResult:
+        """Manage the options."""
+        if user_input is not None:
+            return self.async_create_entry(
+                title="",
+                data=user_input,
+            )
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema(
+                {
+                    vol.Optional(
+                        CONF_SCAN_INTERVAL,
+                        default=self.config_entry.options.get(CONF_SCAN_INTERVAL)
+                        or DEFAULT_POLL_INTERVAL,
+                    ): cv.positive_int,
+                    vol.Optional(
+                        CONF_UNLOCK_DURATION,
+                        default=self.config_entry.options.get(CONF_UNLOCK_DURATION)
+                        or DEFAULT_UNLOCK_DURATION,
+                    ): cv.positive_int,
+                    vol.Optional(
+                        CONF_AUX_ON_DURATION,
+                        default=self.config_entry.options.get(CONF_AUX_ON_DURATION)
+                        or DEFAULT_AUX_ON_DURATION,
+                    ): cv.positive_int,
+                },
+            ),
+        )
+
+
 class C3ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for C3."""
 
     VERSION = 1
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry: ConfigEntry) -> C3OptionsFlow:
+        """Get the options flow."""
+        return C3OptionsFlow(config_entry)
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
