@@ -2,7 +2,13 @@
 from homeassistant.const import Platform
 
 DOMAIN = "zkaccess_c3"
-PLATFORMS: list[Platform] = [Platform.LOCK, Platform.SWITCH, Platform.BINARY_SENSOR]
+
+
+PLATFORMS: list[Platform] = [
+    Platform.LOCK,
+    Platform.SWITCH,
+    Platform.BINARY_SENSOR,
+]
 
 DATA_C3_COORDINATOR = "c3_coordinator"
 DATA_DISCOVERY_SERVICE = "c3_discovery"

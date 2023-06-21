@@ -1,6 +1,7 @@
 """Coordinator class for the C3 panel entities."""
 from datetime import timedelta
 import logging
+from typing import Any
 
 from c3 import C3, rtlog
 
@@ -43,10 +44,11 @@ class C3Coordinator(DataUpdateCoordinator):
 
         self._entry_id = config_entry.entry_id
         self._status = rtlog.DoorAlarmStatusRecord()
-        self.unlock_duration = (
+        self._door_events: dict[rtlog.EventRecord, Any] = {}
+        self.unlock_duration: int = (
             config_entry.options.get(CONF_UNLOCK_DURATION) or DEFAULT_UNLOCK_DURATION
         )
-        self.aux_on_duration = (
+        self.aux_on_duration: int = (
             config_entry.options.get(CONF_AUX_ON_DURATION) or DEFAULT_AUX_ON_DURATION
         )
 
@@ -82,6 +84,14 @@ class C3Coordinator(DataUpdateCoordinator):
         """Return the last received Door/Alarm status."""
         return self._status
 
+    def last_door_event(self, door_id: int) -> rtlog.EventRecord:
+        """Return the last received Event."""
+        return (
+            self._door_events[door_id]
+            if door_id in self._door_events
+            else rtlog.EventRecord()
+        )
+
     async def _update_options_listener(
         self, hass: HomeAssistant, config_entry: ConfigEntry
     ):
@@ -103,30 +113,32 @@ class C3Coordinator(DataUpdateCoordinator):
         try:
             if not self.c3_panel.is_connected():
                 self.c3_panel.connect()
-
-            updated = False
-
-            try:
-                last_record_is_status = False
-                while not last_record_is_status:
-                    logs = self.c3_panel.get_rt_log()
-                    for log in logs:
-                        if isinstance(log, rtlog.DoorAlarmStatusRecord):
-                            self._status = log
-                            last_record_is_status = True
-
-                        updated = True
-
-            except ConnectionError as ex:
-                _LOGGER.error("Realtime log update failed: %s", ex)
-
-                # Attempt to reconnect
-                try:
-                    self.c3_panel.disconnect()
-                finally:
-                    pass
-
-            return updated
-
         except Exception as ex:
             raise UpdateFailed(f"Error communicating with API: {ex}") from ex
+
+        updated = False
+
+        try:
+            last_record_is_status = False
+            while not last_record_is_status:
+                logs = self.c3_panel.get_rt_log()
+                for log in logs:
+                    if isinstance(log, rtlog.DoorAlarmStatusRecord):
+                        self._status = log
+                        last_record_is_status = True
+                    elif isinstance(log, rtlog.EventRecord):
+                        if log.door_id > 0:
+                            self._door_events[log.door_id] = log
+
+                    updated = True
+
+        except ConnectionError as ex:
+            _LOGGER.error("Realtime log update failed: %s", ex)
+
+            # Disconnect explicitly, so a reconnect can be performed at the next attempt
+            try:
+                self.c3_panel.disconnect()
+            finally:
+                pass
+
+        return updated

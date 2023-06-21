@@ -1,4 +1,4 @@
-"""Switch entity implementation for C3 auxiliary inputs."""
+"""Binary sensor entity implementation for C3 auxiliary inputs."""
 from __future__ import annotations
 
 from c3.consts import InOutStatus
