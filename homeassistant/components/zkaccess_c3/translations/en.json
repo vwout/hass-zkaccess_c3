@@ -1,0 +1,42 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Device is already configured",
+            "no_devices_found": "No devices found on the network"
+        },
+        "error": {
+            "cannot_connect": "Failed to connect",
+            "invalid_auth": "Invalid authentication",
+            "unknown": "Unexpected error"
+        },
+        "step": {
+            "confirm": {
+                "description": "Do you want to start setup?"
+            },
+            "user": {
+                "data": {
+                    "host": "Host",
+                    "name": "Name",
+                    "port": "Port"
+                },
+                "data_description": {
+                    "host": "Host",
+                    "name": "Name",
+                    "port": "Port"
+                }
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "data": {
+                    "aux_on_duration": "Duration of auxiliary output activation (seconds)",
+                    "scan_interval": "Poll interval to get C3 panel status (seconds)",
+                    "unlock_duration": "Duration of unlock activation (seconds)"
+                },
+                "title": "C3 panel options"
+            }
+        }
+    }
+}
