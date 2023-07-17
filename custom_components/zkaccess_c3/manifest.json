@@ -1,15 +1,21 @@
 {
   "domain": "zkaccess_c3",
   "name": "C3 Access Control Panel",
-  "after_dependencies": ["network"],
-  "codeowners": ["@vwout"],
+  "after_dependencies": [
+    "network"
+  ],
+  "codeowners": [
+    "@vwout"
+  ],
   "config_flow": true,
   "documentation": "https://github.com/vwout/hass-zkaccess_c3/",
   "homekit": {},
+  "integration_type": "hub",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/vwout/hass-zkaccess_c3/issues",
-  "integration_type": "hub",
-  "requirements": ["zkaccess_c3==0.0.7"],
+  "requirements": [
+    "zkaccess_c3==0.0.7"
+  ],
   "ssdp": [],
   "version": "0.0.1",
   "zeroconf": []
