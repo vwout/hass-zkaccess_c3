@@ -1,5 +1,7 @@
 # C3 Access Control Panel integration for Home Assistant
 
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://hacs.xyz/docs/faq/custom_repositories/)
+
 This integration adds support for ZKTEco C3 Access Control panels to Home Assistant as custom component via HACS.
 It relies on my [native Python library](https://github.com/vwout/zkaccess-c3-py/) for communicating with the panels.
 
@@ -16,7 +18,7 @@ The integration support the C3-100, C3-200 and C3-400 panels.
 ### HACS installation
 
 This integration is planned to become part of the default HACS store.
-
+For now, add it as [custom repository](https://hacs.xyz/docs/faq/custom_repositories/) or perform a manual installation.
 
 ### Manual installation
 
