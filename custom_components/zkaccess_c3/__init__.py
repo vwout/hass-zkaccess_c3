@@ -8,7 +8,7 @@ from c3.consts import C3_PORT_DEFAULT
 import voluptuous as vol
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_HOST, CONF_NAME, CONF_PORT, Platform
+from homeassistant.const import CONF_HOST, CONF_NAME, CONF_PASSWORD, CONF_PORT, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -33,6 +33,7 @@ PLATFORM_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_HOST): cv.string,
         vol.Optional(CONF_PORT, default=C3_PORT_DEFAULT): cv.port,
+        vol.Optional(CONF_PASSWORD): cv.string,
         vol.Optional(CONF_NAME): cv.string,
     }
 )
@@ -93,6 +94,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
         config_entry,
         config_entry.data[CONF_HOST],
         config_entry.data[CONF_PORT],
+        config_entry.data.get(CONF_PASSWORD, ""),
     )
 
     for platform in PLATFORMS:

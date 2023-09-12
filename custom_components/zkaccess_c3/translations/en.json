@@ -17,11 +17,13 @@
                 "data": {
                     "host": "Host",
                     "name": "Name",
+                    "password": "Password",
                     "port": "Port"
                 },
                 "data_description": {
                     "host": "Host",
-                    "name": "Name",
+                    "name": "Name for the device",
+                    "password": "Password",
                     "port": "Port"
                 }
             }

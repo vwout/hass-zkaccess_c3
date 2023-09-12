@@ -30,7 +30,7 @@ class C3Coordinator(DataUpdateCoordinator):
     """ZKAccess C3 panel coordinator."""
 
     def __init__(
-        self, hass: HomeAssistant, config_entry: ConfigEntry, host: str, port: int
+        self, hass: HomeAssistant, config_entry: ConfigEntry, host: str, port: int, password: str
     ) -> None:
         """Initialize C3 coordinator."""
         super().__init__(
@@ -45,6 +45,7 @@ class C3Coordinator(DataUpdateCoordinator):
             ),
         )
 
+        self._password = password
         self._poll_timeout_count = 0
         self._entry_id = config_entry.entry_id
         self._status = rtlog.DoorAlarmStatusRecord()
@@ -115,7 +116,7 @@ class C3Coordinator(DataUpdateCoordinator):
         """Fetch RT log from C3."""
         try:
             if not self.c3_panel.is_connected():
-                self.c3_panel.connect()
+                self.c3_panel.connect(self._password)
         except Exception as ex:
             raise UpdateFailed(f"Error communicating with API: {ex}") from ex
 
