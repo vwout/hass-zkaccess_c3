@@ -37,7 +37,7 @@ class C3Coordinator(DataUpdateCoordinator):
             hass,
             _LOGGER,
             # Name of the data. For logging purposes.
-            name=f"Zkaccess C3 @ {host}:{port}",
+            name=f"ZKAccess C3 @ {host}:{port}",
             # Polling interval. Will only be polled if there are subscribers.
             update_interval=timedelta(
                 seconds=config_entry.options.get(CONF_SCAN_INTERVAL)
@@ -62,25 +62,19 @@ class C3Coordinator(DataUpdateCoordinator):
         )
 
         self.c3_panel: C3 = C3(host, port)
-        if self.c3_panel.connect():
-            coordinator_data = {
+        if self.c3_panel.connect(password):
+            hass.data[DOMAIN][self._entry_id] = {
                 DATA_C3_COORDINATOR: self,
-                Platform.LOCK: [],
-                Platform.SWITCH: [],
-                Platform.BINARY_SENSOR: [],
+                Platform.LOCK: list(
+                    range(1, self.c3_panel.nr_of_locks + 1)
+                ),
+                Platform.SWITCH: list(
+                    range(1, self.c3_panel.nr_aux_out + 1)
+                ),
+                Platform.BINARY_SENSOR: list(
+                    range(1, self.c3_panel.nr_aux_in + 1)
+                )
             }
-
-            coordinator_data[Platform.LOCK] = list(
-                range(1, self.c3_panel.nr_of_locks + 1)
-            )
-            coordinator_data[Platform.BINARY_SENSOR] = list(
-                range(1, self.c3_panel.nr_aux_in + 1)
-            )
-            coordinator_data[Platform.SWITCH] = list(
-                range(1, self.c3_panel.nr_aux_out + 1)
-            )
-
-            hass.data[DOMAIN][self._entry_id] = coordinator_data
         else:
             raise UpdateFailed(f"Connection to C3 {host} failed.")
 

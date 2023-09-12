@@ -1,4 +1,6 @@
 """Config flow for ZKAccess C3."""
+from __future__ import annotations
+
 import logging
 from typing import Any
 
@@ -49,9 +51,9 @@ async def _async_has_devices(hass: HomeAssistant) -> bool:
     """Return if there are devices that can be discovered."""
     adapters = await network.async_get_adapters(hass)
     ipv4_adapters = [adapter["ipv4"] for adapter in adapters]
-    ipv4_adresses = [ip_info[0]["address"] for ip_info in ipv4_adapters]
+    ipv4_addresses = [ip_info[0]["address"] for ip_info in ipv4_adapters]
 
-    devices = await hass.async_add_executor_job(C3.discover, ipv4_adresses)
+    devices = await hass.async_add_executor_job(C3.discover, ipv4_addresses)
     return len(devices) > 0
 
 
