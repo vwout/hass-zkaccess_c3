@@ -2,13 +2,16 @@
 from datetime import timedelta
 import logging
 from typing import Any
+import async_timeout
+import asyncio
+import requests
 
 from c3 import C3, rtlog
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_SCAN_INTERVAL, Platform
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from homeassistant.helpers.update_coordinator import _DataT, DataUpdateCoordinator, UpdateFailed
 
 from .const import (
     CONF_AUX_ON_DURATION,
@@ -42,6 +45,7 @@ class C3Coordinator(DataUpdateCoordinator):
             ),
         )
 
+        self._poll_timeout_count = 0
         self._entry_id = config_entry.entry_id
         self._status = rtlog.DoorAlarmStatusRecord()
         self._door_events: dict[rtlog.EventRecord, Any] = {}
@@ -107,9 +111,8 @@ class C3Coordinator(DataUpdateCoordinator):
             config_entry.options.get(CONF_AUX_ON_DURATION) or DEFAULT_AUX_ON_DURATION
         )
 
-    async def _async_update_data(self):
-        """Fetch data from API endpoint."""
-
+    def _poll_rt_log(self) -> _DataT:
+        """Fetch RT log from C3."""
         try:
             if not self.c3_panel.is_connected():
                 self.c3_panel.connect()
@@ -129,16 +132,38 @@ class C3Coordinator(DataUpdateCoordinator):
                     elif isinstance(log, rtlog.EventRecord):
                         if log.door_id > 0:
                             self._door_events[log.door_id] = log
-
                     updated = True
-
         except ConnectionError as ex:
             _LOGGER.error("Realtime log update failed: %s", ex)
 
-            # Disconnect explicitly, so a reconnect can be performed at the next attempt
+        if updated:
+            self._poll_timeout_count = 0
+        else:
+            # Disconnect explicitly, so a re-connect can be performed at the next attempt
             try:
                 self.c3_panel.disconnect()
             finally:
                 pass
 
         return updated
+
+    async def _async_update_data(self) -> _DataT:
+        """Fetch RT log with handling of timeouts
+
+        The RT logs are retrieved, with a small timeout of 5 seconds.
+        When multiple consecutive fetch actions fail, the connection to the panel
+        is actively disconnected to reset the connection at the next poll attempt.
+        """
+        try:
+            async with async_timeout.timeout(5):
+                return self._poll_rt_log()
+        except (asyncio.TimeoutError, requests.exceptions.Timeout):
+            self._poll_timeout_count = self._poll_timeout_count + 1
+            if self._poll_timeout_count > 5:
+                # Disconnect explicitly, so a re-connect can be performed at the next attempt
+                try:
+                    self.c3_panel.disconnect()
+                finally:
+                    pass
+            raise
+
