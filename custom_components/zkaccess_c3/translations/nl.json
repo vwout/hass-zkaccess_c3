@@ -1,28 +1,30 @@
 {
     "config": {
         "abort": {
-            "already_configured": "Device is already configured",
-            "no_devices_found": "No devices found on the network"
+            "already_configured": "Het apparaat is al ingesteld",
+            "no_devices_found": "Geen apparaten gevonden op het netwerk"
         },
         "error": {
-            "cannot_connect": "Failed to connect",
-            "invalid_auth": "Invalid authentication",
-            "unknown": "Unexpected error"
+            "cannot_connect": "Verbinden is mislukt",
+            "invalid_auth": "Ongeldige aanmeldgegevens",
+            "unknown": "Onverwachte fout"
         },
         "step": {
             "confirm": {
-                "description": "Do you want to start setup?"
+                "description": "Beginnen met instellen?"
             },
             "user": {
                 "data": {
                     "host": "Host",
-                    "name": "Name",
-                    "port": "Port"
+                    "name": "Naam",
+                    "password": "Wachtwoord",
+                    "port": "Poort"
                 },
                 "data_description": {
                     "host": "Host",
-                    "name": "Name",
-                    "port": "Port"
+                    "name": "Naam van het apparaat",
+                    "password": "Wachtwoord",
+                    "port": "Poort"
                 }
             }
         }
@@ -31,11 +33,11 @@
         "step": {
             "init": {
                 "data": {
-                    "aux_on_duration": "Duration of auxiliary output activation (seconds)",
-                    "scan_interval": "Poll interval to get C3 panel status (seconds)",
-                    "unlock_duration": "Duration of unlock activation (seconds)"
+                    "aux_on_duration": "Activatieduur van de extra uitgang (seconden)",
+                    "scan_interval": "Interval voor het ophalen van de C3 apparaat status (seconden)",
+                    "unlock_duration": "Duur van de slotontgrendeling (seconden)"
                 },
-                "title": "C3 panel options"
+                "title": "C3 apparaat opties"
             }
         }
     }
