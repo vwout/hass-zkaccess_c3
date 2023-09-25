@@ -61,23 +61,13 @@ async def async_setup(hass: HomeAssistant, config_entry: ConfigType) -> bool:
 
 async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
     """Set up C3 from a config entry."""
-    hass.data.setdefault(
-        DOMAIN,
-        {
-            config_entry.entry_id: {
-                DATA_C3_COORDINATOR: None,
-                Platform.LOCK: [],
-                Platform.SWITCH: [],
-                Platform.BINARY_SENSOR: [],
-            }
-        },
-    )
+    hass.data.setdefault(DOMAIN, {})
 
     # # Setup C3 discovery to automatically add devices
     # c3_discovery = C3DiscoveryService(hass)
     # hass.data[DOMAIN][DATA_DISCOVERY_SERVICE] = c3_discovery
     #
-    # await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
+    # await hass.config_entries.async_forward_entry_setups(config_entry, SUPPORTED_PLATFORMS)
     #
     # #def _async_scan_update(_=None):
     #     c3_discovery.scan()
@@ -97,26 +87,37 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
         config_entry.data.get(CONF_PASSWORD, ""),
     )
 
-    for platform in PLATFORMS:
-        hass.async_create_task(
-            hass.config_entries.async_forward_entry_setup(config_entry, platform)
-        )
-
+    # Fetch first data before creating entity entries
     await c3_coordinator.async_config_entry_first_refresh()
+
+    await hass.config_entries.async_forward_entry_setups(
+        config_entry, SUPPORTED_PLATFORMS
+    )
+    config_entry.async_on_unload(config_entry.add_update_listener(async_reload_entry))
 
     return True
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload discovery thread and entities entry."""
+    if not hass.data.get(DOMAIN):
+        return True
 
     if hass.data[DOMAIN].get(DATA_DISCOVERY_INTERVAL) is not None:
-        hass.data[DOMAIN].pop(DATA_DISCOVERY_INTERVAL)()
+        hass.data[DOMAIN].pop(DATA_DISCOVERY_INTERVAL)
 
     if hass.data[DOMAIN].get(DATA_DISCOVERY_SERVICE) is not None:
         hass.data[DOMAIN].pop(DATA_DISCOVERY_SERVICE)
 
-    if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
+    if unload_ok := await hass.config_entries.async_unload_platforms(
+        entry, SUPPORTED_PLATFORMS
+    ):
         hass.data[DOMAIN].pop(entry.entry_id)
 
     return unload_ok
+
+
+async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Reload config entry."""
+    await async_unload_entry(hass, entry)
+    await async_setup_entry(hass, entry)

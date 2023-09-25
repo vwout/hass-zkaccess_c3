@@ -48,6 +48,8 @@ class C3Coordinator(DataUpdateCoordinator):
         self._password = password
         self._poll_timeout_count = 0
         self._entry_id = config_entry.entry_id
+        self._attr_unique_id = self._entry_id
+
         self._status = rtlog.DoorAlarmStatusRecord()
         self._door_events: dict[rtlog.EventRecord, Any] = {}
         self.unlock_duration: int = (

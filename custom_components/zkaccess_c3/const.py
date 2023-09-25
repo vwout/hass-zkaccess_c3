@@ -3,8 +3,7 @@ from homeassistant.const import Platform
 
 DOMAIN = "zkaccess_c3"
 
-
-PLATFORMS: list[Platform] = [
+SUPPORTED_PLATFORMS: list[Platform] = [
     Platform.LOCK,
     Platform.SWITCH,
     Platform.BINARY_SENSOR,
