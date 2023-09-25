@@ -4,14 +4,19 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+import voluptuous as vol
 from c3 import C3
 from c3.consts import C3_PORT_DEFAULT
-import voluptuous as vol
-
 from homeassistant import config_entries
 from homeassistant.components import network
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_HOST, CONF_NAME, CONF_PASSWORD, CONF_PORT, CONF_SCAN_INTERVAL
+from homeassistant.const import (
+    CONF_HOST,
+    CONF_NAME,
+    CONF_PASSWORD,
+    CONF_PORT,
+    CONF_SCAN_INTERVAL,
+)
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.exceptions import HomeAssistantError

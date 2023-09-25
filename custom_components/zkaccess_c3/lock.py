@@ -5,7 +5,6 @@ from typing import Any
 
 from c3.consts import ControlOutputAddress, InOutStatus
 from c3.controldevice import ControlDeviceOutput
-
 from homeassistant.components.lock import LockEntity, LockEntityFeature
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
@@ -26,11 +25,7 @@ async def async_setup_entry(
     c3_coordinator = hass.data[DOMAIN][config_entry.entry_id][DATA_C3_COORDINATOR]
     locks = hass.data[DOMAIN][config_entry.entry_id][Platform.LOCK]
 
-    entities = []
-    for lock_idx in locks:
-        entities.append(C3LockEntity(c3_coordinator, lock_idx))
-
-    async_add_entities(entities)
+    async_add_entities(C3LockEntity(c3_coordinator, lock_idx) for lock_idx in locks)
 
 
 class C3LockEntity(CoordinatorEntity, LockEntity):

@@ -4,11 +4,10 @@ from __future__ import annotations
 # from datetime import timedelta
 import logging
 
-from c3.consts import C3_PORT_DEFAULT
 import voluptuous as vol
-
+from c3.consts import C3_PORT_DEFAULT
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_HOST, CONF_NAME, CONF_PASSWORD, CONF_PORT, Platform
+from homeassistant.const import CONF_HOST, CONF_NAME, CONF_PASSWORD, CONF_PORT
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -17,11 +16,10 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 
 from .const import (
-    DATA_C3_COORDINATOR,
     DATA_DISCOVERY_INTERVAL,
     DATA_DISCOVERY_SERVICE,
     DOMAIN,
-    PLATFORMS,
+    SUPPORTED_PLATFORMS,
 )
 from .coordinator import C3Coordinator
 

@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 from c3.consts import InOutStatus
-
 from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
     BinarySensorEntity,
@@ -25,11 +24,9 @@ async def async_setup_entry(
     c3_coordinator = hass.data[DOMAIN][config_entry.entry_id][DATA_C3_COORDINATOR]
     aux_inputs = hass.data[DOMAIN][config_entry.entry_id][Platform.BINARY_SENSOR]
 
-    entities = []
-    for aux_in_idx in aux_inputs:
-        entities.append(C3AuxInEntity(c3_coordinator, aux_in_idx))
-
-    async_add_entities(entities)
+    async_add_entities(
+        C3AuxInEntity(c3_coordinator, aux_in_idx) for aux_in_idx in aux_inputs
+    )
 
 
 class C3AuxInEntity(CoordinatorEntity, BinarySensorEntity):

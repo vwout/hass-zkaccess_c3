@@ -5,7 +5,6 @@ from typing import Any
 
 from c3.consts import ControlOutputAddress, InOutStatus
 from c3.controldevice import ControlDeviceCancelAlarms, ControlDeviceOutput
-
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
@@ -27,14 +26,12 @@ async def async_setup_entry(
     aux_outputs = hass.data[DOMAIN][config_entry.entry_id][Platform.SWITCH]
     door_alarms = hass.data[DOMAIN][config_entry.entry_id][Platform.LOCK]
 
-    entities: list[SwitchEntity] = []
-    for aux_out_idx in aux_outputs:
-        entities.append(C3AuxOutEntity(c3_coordinator, aux_out_idx))
-
-    for door_idx in door_alarms:
-        entities.append(C3AlarmEntity(c3_coordinator, door_idx))
-
-    async_add_entities(entities)
+    async_add_entities(
+        C3AuxOutEntity(c3_coordinator, aux_out_idx) for aux_out_idx in aux_outputs
+    )
+    async_add_entities(
+        C3AlarmEntity(c3_coordinator, door_idx) for door_idx in door_alarms
+    )
 
 
 class C3AuxOutEntity(CoordinatorEntity, SwitchEntity):

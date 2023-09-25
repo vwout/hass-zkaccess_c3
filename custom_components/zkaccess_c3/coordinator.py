@@ -1,17 +1,21 @@
 """Coordinator class for the C3 panel entities."""
-from datetime import timedelta
-import logging
-from typing import Any
-import async_timeout
 import asyncio
+import logging
+from datetime import timedelta
+from typing import Any
+
+import async_timeout
 import requests
-
 from c3 import C3, rtlog
-
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_SCAN_INTERVAL, Platform
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.update_coordinator import _DataT, DataUpdateCoordinator, UpdateFailed
+from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.update_coordinator import (
+    DataUpdateCoordinator,
+    UpdateFailed,
+    _T,
+)
 
 from .const import (
     CONF_AUX_ON_DURATION,
@@ -30,7 +34,12 @@ class C3Coordinator(DataUpdateCoordinator):
     """ZKAccess C3 panel coordinator."""
 
     def __init__(
-        self, hass: HomeAssistant, config_entry: ConfigEntry, host: str, port: int, password: str
+        self,
+        hass: HomeAssistant,
+        config_entry: ConfigEntry,
+        host: str,
+        port: int,
+        password: str,
     ) -> None:
         """Initialize C3 coordinator."""
         super().__init__(
@@ -67,16 +76,16 @@ class C3Coordinator(DataUpdateCoordinator):
         if self.c3_panel.connect(password):
             hass.data[DOMAIN][self._entry_id] = {
                 DATA_C3_COORDINATOR: self,
-                Platform.LOCK: list(
-                    range(1, self.c3_panel.nr_of_locks + 1)
-                ),
-                Platform.SWITCH: list(
-                    range(1, self.c3_panel.nr_aux_out + 1)
-                ),
-                Platform.BINARY_SENSOR: list(
-                    range(1, self.c3_panel.nr_aux_in + 1)
-                )
+                Platform.LOCK: list(range(1, self.c3_panel.nr_of_locks + 1)),
+                Platform.SWITCH: list(range(1, self.c3_panel.nr_aux_out + 1)),
+                Platform.BINARY_SENSOR: list(range(1, self.c3_panel.nr_aux_in + 1)),
             }
+
+            self._attr_device_info = DeviceInfo(
+                identifiers={(DOMAIN, self.c3_panel.serial_number)},
+                name=self.c3_panel.device_name,
+                sw_version=self.c3_panel.firmware_version,
+            )
         else:
             raise UpdateFailed(f"Connection to C3 {host} failed.")
 
@@ -108,7 +117,7 @@ class C3Coordinator(DataUpdateCoordinator):
             config_entry.options.get(CONF_AUX_ON_DURATION) or DEFAULT_AUX_ON_DURATION
         )
 
-    def _poll_rt_log(self) -> _DataT:
+    def _poll_rt_log(self) -> _T:
         """Fetch RT log from C3."""
         try:
             if not self.c3_panel.is_connected():
@@ -144,8 +153,8 @@ class C3Coordinator(DataUpdateCoordinator):
 
         return updated
 
-    async def _async_update_data(self) -> _DataT:
-        """Fetch RT log with handling of timeouts
+    async def _async_update_data(self) -> _T:
+        """Fetch RT log with handling of timeouts.
 
         The RT logs are retrieved, with a small timeout of 5 seconds.
         When multiple consecutive fetch actions fail, the connection to the panel
@@ -163,4 +172,3 @@ class C3Coordinator(DataUpdateCoordinator):
                 finally:
                     pass
             raise
-

@@ -4,7 +4,6 @@ from __future__ import annotations
 import logging
 
 from c3 import C3
-
 from homeassistant.core import HomeAssistant
 
 from .const import DISCOVERY_TIMEOUT
