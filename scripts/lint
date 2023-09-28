@@ -14,4 +14,4 @@ black .
 
 echo
 echo "**** ruff ****"
-ruff check . --fix
+ruff check -q . --fix

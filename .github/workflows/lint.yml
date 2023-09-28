@@ -6,8 +6,8 @@ on:
 
 
 jobs:
-  ruff:
-    name: "Ruff"
+  lint:
+    name: "Linting"
     runs-on: "ubuntu-latest"
     steps:
         - name: "Checkout the repository"
@@ -29,4 +29,4 @@ jobs:
           run: python3 -m black --check .
 
         - name: "Run Ruff"
-          run: python3 -m ruff check .
+          run: python3 -m ruff check -q .
