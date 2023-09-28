@@ -6,7 +6,7 @@ on:
       - 'README.md'
   pull_request:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "1 1 * * 1"
 
 jobs:
   validate:
