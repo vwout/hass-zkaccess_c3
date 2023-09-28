@@ -9,25 +9,25 @@
                     "host": "[%key:common::config_flow::data::host%]",
                     "port": "[%key:common::config_flow::data::port%]",
                     "password": "[%key:common::config_flow::data::password%]",
-                    "name": "[%key:common::config_flow::data::name%]",
+                    "name": "[%key:common::config_flow::data::name%]"
                 },
                 "data_description": {
                     "host": "[%key:common::config_flow::data::host%]",
                     "port": "[%key:common::config_flow::data::port%]",
                     "password": "[%key:common::config_flow::data::password%]",
-                    "name": "[%key:common::config_flow::data::name%]",
-                },
-            },
+                    "name": "[%key:common::config_flow::data::name%]"
+                }
+            }
         },
         "error": {
             "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
             "invalid_auth": "[%key:common::config_flow::error::invalid_auth%]",
-            "unknown": "[%key:common::config_flow::error::unknown%]",
+            "unknown": "[%key:common::config_flow::error::unknown%]"
         },
         "abort": {
             "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
-            "no_devices_found": "[%key:common::config_flow::abort::no_devices_found%]",
-        },
+            "no_devices_found": "[%key:common::config_flow::abort::no_devices_found%]"
+        }
     },
     "options": {
         "step": {
@@ -36,9 +36,9 @@
                 "data": {
                     "scan_interval": "Poll interval to get C3 panel status (seconds)",
                     "unlock_duration": "Duration of unlock activation (seconds)",
-                    "aux_on_duration": "Duration of auxiliary output activation (seconds)",
-                },
+                    "aux_on_duration": "Duration of auxiliary output activation (seconds)"
+                }
             }
         }
-    },
+    }
 }
