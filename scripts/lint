@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -e
+
+cd "$(dirname "$0")/.."
+
+echo
+echo "**** isort ****"
+isort --profile black .
+
+echo
+echo "**** black ****"
+black .
+
+echo
+echo "**** ruff ****"
+ruff check . --fix

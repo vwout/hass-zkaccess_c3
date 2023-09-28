@@ -1,0 +1,14 @@
+{
+    "name": "vwout/hass-zkaccess_c3",
+    "image": "mcr.microsoft.com/vscode/devcontainers/python:0-3.11-bullseye",
+    "postCreateCommand": "scripts/setup",
+    "forwardPorts": [
+        8123
+    ],
+    "portsAttributes": {
+        "8123": {
+            "label": "Home Assistant ZKAccess C3",
+            "onAutoForward": "notify"
+        }
+    }
+}
