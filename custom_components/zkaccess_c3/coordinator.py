@@ -12,7 +12,7 @@ from homeassistant.const import CONF_SCAN_INTERVAL, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import (
-    _T,
+    _DataT,
     DataUpdateCoordinator,
     UpdateFailed,
 )
@@ -117,7 +117,7 @@ class C3Coordinator(DataUpdateCoordinator):
             config_entry.options.get(CONF_AUX_ON_DURATION) or DEFAULT_AUX_ON_DURATION
         )
 
-    def _poll_rt_log(self) -> _T:
+    def _poll_rt_log(self) -> _DataT:
         """Fetch RT log from C3."""
         try:
             if not self.c3_panel.is_connected():
@@ -153,7 +153,7 @@ class C3Coordinator(DataUpdateCoordinator):
 
         return updated
 
-    async def _async_update_data(self) -> _T:
+    async def _async_update_data(self) -> _DataT:
         """Fetch RT log with handling of timeouts.
 
         The RT logs are retrieved, with a small timeout of 5 seconds.
