@@ -12,9 +12,9 @@ from homeassistant.const import CONF_SCAN_INTERVAL, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import (
-    _DataT,
     DataUpdateCoordinator,
     UpdateFailed,
+    _DataT,
 )
 
 from .const import (
