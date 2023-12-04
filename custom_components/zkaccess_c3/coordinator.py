@@ -122,6 +122,8 @@ class C3Coordinator(DataUpdateCoordinator):
         try:
             if not self.c3_panel.is_connected():
                 self.c3_panel.connect(self._password)
+        except ValueError as ex:
+            raise UpdateFailed(f"Invalid response received: {ex}") from ex
         except Exception as ex:
             raise UpdateFailed(f"Error communicating with API: {ex}") from ex
 
