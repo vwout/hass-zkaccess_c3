@@ -46,7 +46,7 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
 async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str, Any]:
     """Validate C3 connection parameters."""
     panel = C3(data[CONF_HOST], port=data[CONF_PORT])
-    if not panel.connect():
+    if not panel.connect(data.get(CONF_PASSWORD, "")):
         raise CannotConnect
 
     return {"title": data[CONF_NAME] or "ZKAccess C3"}
