@@ -40,3 +40,23 @@ Click *Submit* and the integration will connect and create all entities.
 The integration works by polling the panel.
 In the device configuration options, the poll interval can be changed.
 The configuration options also allow modification of the activation duration used when unlocking a door, or activating an auxiliary output.
+
+### Troubleshooting
+
+The protocol for communication with the ZKAccess panels is not documented.
+All functionality relies on reverse engineering and the experience is that there is quite some variation on how the different products behave.
+
+In case of issues, perform these steps:
+- Add the following to configuration.yaml:
+  ```
+  logger:
+    logs:
+      C3: debug
+  ```
+- Restart Homeassistant
+- Go to Settings > Devices & Services and enable 'debug logging' for the ZKAccess C3 device.
+- Interact with the C3 device (which may generate errors) and disable 'debug logging' afterwards.
+- Create an issue for this repository, including:
+  - The device type (e.g. C3-400)
+  - The firmware version
+  - The log that is gathered from HomeAssistant
