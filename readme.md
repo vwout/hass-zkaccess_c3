@@ -1,8 +1,8 @@
-# C3 Access Control Panel integration for Home Assistant
+# C3/inBio Access Control Panel integration for Home Assistant
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://hacs.xyz/docs/faq/custom_repositories/)
 
-This integration adds support for ZKTEco C3 Access Control panels to Home Assistant as custom component via HACS.
+This integration adds support for ZKTEco ZKAccess C3 and inBio Door Access Control panels to Home Assistant as custom component via HACS.
 It relies on my [native Python library](https://github.com/vwout/zkaccess-c3-py/) for communicating with the panels.
 
 This integration creates a devices for each panel and adds the following entities:
@@ -11,7 +11,7 @@ This integration creates a devices for each panel and adds the following entitie
 - a Binary sensor representing each auxiliary input
 - a Switch representing each auxiliary output
 
-The integration support the C3-100, C3-200 and C3-400 panels.
+The integration support the ZKAccess C3-100, C3-200, C3-400 and inBio 160/260/460 panels.
 
 ## Installation
 

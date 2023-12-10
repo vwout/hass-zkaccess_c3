@@ -1,6 +1,6 @@
 {
     "domain": "zkaccess_c3",
-    "name": "C3 Access Control Panel",
+    "name": "C3/inBio Door Access Control Panel",
     "after_dependencies": ["network"],
     "codeowners": ["@vwout"],
     "config_flow": true,
@@ -9,7 +9,7 @@
     "integration_type": "hub",
     "iot_class": "local_polling",
     "issue_tracker": "https://github.com/vwout/hass-zkaccess_c3/issues",
-    "requirements": ["zkaccess_c3==0.0.9"],
+    "requirements": ["zkaccess_c3==0.0.10"],
     "ssdp": [],
     "version": "0.0.5",
     "zeroconf": []
