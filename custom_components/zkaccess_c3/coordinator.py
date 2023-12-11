@@ -25,6 +25,7 @@ from .const import (
     DEFAULT_POLL_INTERVAL,
     DEFAULT_UNLOCK_DURATION,
     DOMAIN,
+    MANUFACTURER,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -83,11 +84,20 @@ class C3Coordinator(DataUpdateCoordinator):
 
             self._attr_device_info = DeviceInfo(
                 identifiers={(DOMAIN, self.c3_panel.serial_number)},
-                name=self.c3_panel.device_name,
+                default_manufacturer=MANUFACTURER,
+                default_model="C3/inBio",
+                default_name=self.c3_panel.device_name,
+                name=config_entry.title,
+                serial_number=self.c3_panel.serial_number,
                 sw_version=self.c3_panel.firmware_version,
             )
         else:
             raise UpdateFailed(f"Connection to C3 {host} failed.")
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Return the device info object that represents the ZKAccess device."""
+        return self._attr_device_info
 
     @property
     def status(self) -> rtlog.DoorAlarmStatusRecord:

@@ -9,6 +9,7 @@ from homeassistant.components.binary_sensor import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
@@ -68,3 +69,8 @@ class C3AuxInEntity(CoordinatorEntity, BinarySensorEntity):
     def icon(self) -> str | None:
         """Icon of the entity."""
         return "mdi:door-sensor"
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Device info of the access control panel."""
+        return self._coordinator.device_info

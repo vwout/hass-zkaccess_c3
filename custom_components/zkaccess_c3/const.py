@@ -2,6 +2,7 @@
 from homeassistant.const import Platform
 
 DOMAIN = "zkaccess_c3"
+MANUFACTURER = "ZKTEco"
 
 SUPPORTED_PLATFORMS: list[Platform] = [
     Platform.LOCK,

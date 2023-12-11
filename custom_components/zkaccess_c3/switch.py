@@ -9,6 +9,7 @@ from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
@@ -89,6 +90,11 @@ class C3AuxOutEntity(CoordinatorEntity, SwitchEntity):
         )
         self._coordinator.c3_panel.control_device(control_command)
 
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Device info of the access control panel."""
+        return self._coordinator.device_info
+
 
 class C3AlarmEntity(CoordinatorEntity, SwitchEntity):
     """Entity representing the C3 panel auxiliary outputs."""
@@ -146,3 +152,8 @@ class C3AlarmEntity(CoordinatorEntity, SwitchEntity):
         """Reset the alarm - all alarms."""
         self._coordinator.c3_panel.control_device(ControlDeviceCancelAlarms())
         self._attr_is_on = False
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Device info of the access control panel."""
+        return self._coordinator.device_info
