@@ -2,7 +2,7 @@
 import asyncio
 import logging
 from datetime import timedelta
-from typing import Any
+from typing import Any, TypeVar
 
 import async_timeout
 import requests
@@ -11,11 +11,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_SCAN_INTERVAL, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
-from homeassistant.helpers.update_coordinator import (
-    DataUpdateCoordinator,
-    UpdateFailed,
-    _DataT,
-)
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import (
     CONF_AUX_ON_DURATION,
@@ -28,6 +24,7 @@ from .const import (
     MANUFACTURER,
 )
 
+_DataT = TypeVar("_DataT")
 _LOGGER = logging.getLogger(__name__)
 
 
