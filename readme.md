@@ -7,7 +7,7 @@ It relies on my [native Python library](https://github.com/vwout/zkaccess-c3-py/
 
 This integration creates a devices for each panel and adds the following entities:
 - a Lock representing each doorlock
-- a Switch representing an (resetable) alarm, one per door
+- a Switch representing each (resetable) alarm, one per door
 - a Binary sensor representing each auxiliary input
 - a Switch representing each auxiliary output
 
@@ -55,7 +55,7 @@ In case of issues, perform these steps:
   ```
 - Restart Homeassistant
 - Go to Settings > Devices & Services and enable 'debug logging' for the ZKAccess C3 device.
-- Interact with the C3 device (which may generate errors) and disable 'debug logging' afterwards.
+- Interact with the C3 device (which may generate errors) and disable 'debug logging' afterward.
 - Create an issue for this repository, including:
   - The device type (e.g. C3-400)
   - The firmware version

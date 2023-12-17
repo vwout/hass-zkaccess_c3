@@ -33,7 +33,7 @@ async def async_setup_entry(
 class C3AuxInEntity(CoordinatorEntity, BinarySensorEntity):
     """Entity representing the C3 panel auxiliary inputs."""
 
-    def __init__(self, coordinator, idx) -> None:
+    def __init__(self, coordinator, idx: int) -> None:
         """Pass coordinator to CoordinatorEntity."""
         super().__init__(coordinator, context=idx)
         self._coordinator = coordinator

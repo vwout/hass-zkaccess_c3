@@ -1,6 +1,7 @@
 """Switch entity implementation for C3 auxiliary outputs."""
 from __future__ import annotations
 
+from collections.abc import MutableMapping
 from typing import Any
 
 from c3.consts import ControlOutputAddress, InOutStatus
@@ -38,11 +39,12 @@ async def async_setup_entry(
 class C3AuxOutEntity(CoordinatorEntity, SwitchEntity):
     """Entity representing the C3 panel auxiliary outputs."""
 
-    def __init__(self, coordinator: C3Coordinator, idx) -> None:
+    def __init__(self, coordinator: C3Coordinator, idx: int) -> None:
         """Pass coordinator to CoordinatorEntity."""
         super().__init__(coordinator, context=idx)
         self._coordinator = coordinator
         self._idx = idx
+        self._attr_is_on: bool | None = None
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self._coordinator.c3_panel.serial_number)},
         )
@@ -97,12 +99,13 @@ class C3AuxOutEntity(CoordinatorEntity, SwitchEntity):
 class C3AlarmEntity(CoordinatorEntity, SwitchEntity):
     """Entity representing the C3 panel auxiliary outputs."""
 
-    def __init__(self, coordinator: C3Coordinator, idx) -> None:
+    def __init__(self, coordinator: C3Coordinator, idx: int) -> None:
         """Pass coordinator to CoordinatorEntity."""
         super().__init__(coordinator, context=idx)
         self._coordinator = coordinator
         self._idx = idx
-        self._attr_extra_state_attributes = {
+        self._attr_is_on: bool | None = None
+        self._attr_extra_state_attributes: MutableMapping[str, Any] = {
             "last_event_time": None,
             "last_event": None,
         }

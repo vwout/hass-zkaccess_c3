@@ -85,7 +85,8 @@ class C3Coordinator(DataUpdateCoordinator):
                 identifiers={(DOMAIN, self.c3_panel.serial_number)},
                 manufacturer=MANUFACTURER,
                 model="C3/inBio",
-                name=(self.c3_panel.device_name if not "?" else "") or config_entry.title,
+                name=(self.c3_panel.device_name if not "?" else "")
+                or config_entry.title,
                 serial_number=self.c3_panel.serial_number,
                 sw_version=self.c3_panel.firmware_version,
             )

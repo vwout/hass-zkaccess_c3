@@ -32,7 +32,7 @@ async def async_setup_entry(
 class C3LockEntity(CoordinatorEntity, LockEntity):
     """Entity representing the C3 panel door locks."""
 
-    def __init__(self, coordinator: C3Coordinator, idx) -> None:
+    def __init__(self, coordinator: C3Coordinator, idx: int) -> None:
         """Pass coordinator to CoordinatorEntity."""
         super().__init__(coordinator, context=idx)
         self._coordinator = coordinator
