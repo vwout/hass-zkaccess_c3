@@ -43,6 +43,9 @@ class C3AuxOutEntity(CoordinatorEntity, SwitchEntity):
         super().__init__(coordinator, context=idx)
         self._coordinator = coordinator
         self._idx = idx
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, self._coordinator.c3_panel.serial_number)},
+        )
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -90,11 +93,6 @@ class C3AuxOutEntity(CoordinatorEntity, SwitchEntity):
         )
         self._coordinator.c3_panel.control_device(control_command)
 
-    @property
-    def device_info(self) -> DeviceInfo:
-        """Device info of the access control panel."""
-        return self._coordinator.device_info
-
 
 class C3AlarmEntity(CoordinatorEntity, SwitchEntity):
     """Entity representing the C3 panel auxiliary outputs."""
@@ -108,6 +106,9 @@ class C3AlarmEntity(CoordinatorEntity, SwitchEntity):
             "last_event_time": None,
             "last_event": None,
         }
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, self._coordinator.c3_panel.serial_number)},
+        )
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -152,8 +153,3 @@ class C3AlarmEntity(CoordinatorEntity, SwitchEntity):
         """Reset the alarm - all alarms."""
         self._coordinator.c3_panel.control_device(ControlDeviceCancelAlarms())
         self._attr_is_on = False
-
-    @property
-    def device_info(self) -> DeviceInfo:
-        """Device info of the access control panel."""
-        return self._coordinator.device_info

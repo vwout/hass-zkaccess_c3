@@ -39,6 +39,9 @@ class C3AuxInEntity(CoordinatorEntity, BinarySensorEntity):
         self._coordinator = coordinator
         self._idx = idx
         self._attr_device_class = BinarySensorDeviceClass.DOOR.value
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, self._coordinator.c3_panel.serial_number)},
+        )
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -69,8 +72,3 @@ class C3AuxInEntity(CoordinatorEntity, BinarySensorEntity):
     def icon(self) -> str | None:
         """Icon of the entity."""
         return "mdi:door-sensor"
-
-    @property
-    def device_info(self) -> DeviceInfo:
-        """Device info of the access control panel."""
-        return self._coordinator.device_info

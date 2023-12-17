@@ -10,7 +10,7 @@ from c3 import C3, rtlog
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_SCAN_INTERVAL, Platform
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import (
@@ -79,22 +79,18 @@ class C3Coordinator(DataUpdateCoordinator):
                 Platform.BINARY_SENSOR: list(range(1, self.c3_panel.nr_aux_in + 1)),
             }
 
-            self._attr_device_info = DeviceInfo(
+            device_registry = dr.async_get(hass)
+            device_registry.async_get_or_create(
+                config_entry_id=self._entry_id,
                 identifiers={(DOMAIN, self.c3_panel.serial_number)},
-                default_manufacturer=MANUFACTURER,
-                default_model="C3/inBio",
-                default_name=self.c3_panel.device_name,
-                name=config_entry.title,
+                manufacturer=MANUFACTURER,
+                model="C3/inBio",
+                name=(self.c3_panel.device_name if not "?" else "") or config_entry.title,
                 serial_number=self.c3_panel.serial_number,
                 sw_version=self.c3_panel.firmware_version,
             )
         else:
             raise UpdateFailed(f"Connection to C3 {host} failed.")
-
-    @property
-    def device_info(self) -> DeviceInfo:
-        """Return the device info object that represents the ZKAccess device."""
-        return self._attr_device_info
 
     @property
     def status(self) -> rtlog.DoorAlarmStatusRecord:
