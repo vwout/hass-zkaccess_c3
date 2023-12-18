@@ -8,7 +8,12 @@ import async_timeout
 import requests
 from c3 import C3, rtlog
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_SCAN_INTERVAL, Platform
+from homeassistant.const import (
+    CONF_SCAN_INTERVAL,
+    MAJOR_VERSION,
+    MINOR_VERSION,
+    Platform,
+)
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
@@ -80,16 +85,18 @@ class C3Coordinator(DataUpdateCoordinator):
             }
 
             device_registry = dr.async_get(hass)
-            device_registry.async_get_or_create(
-                config_entry_id=self._entry_id,
-                identifiers={(DOMAIN, self.c3_panel.serial_number)},
-                manufacturer=MANUFACTURER,
-                model="C3/inBio",
-                name=(self.c3_panel.device_name if not "?" else "")
+            device_info = {
+                "config_entry_id": self._entry_id,
+                "identifiers": {(DOMAIN, self.c3_panel.serial_number)},
+                "manufacturer": MANUFACTURER,
+                "model": "C3/inBio",
+                "name": (self.c3_panel.device_name if not "?" else "")
                 or config_entry.title,
-                serial_number=self.c3_panel.serial_number,
-                sw_version=self.c3_panel.firmware_version,
-            )
+                "sw_version": self.c3_panel.firmware_version,
+            }
+            if MAJOR_VERSION >= 2023 and MINOR_VERSION >= 11:
+                device_info["serial_number"] = self.c3_panel.serial_number
+            device_registry.async_get_or_create(**device_info)
         else:
             raise UpdateFailed(f"Connection to C3 {host} failed.")
 
