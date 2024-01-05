@@ -1,6 +1,7 @@
 """Switch entity implementation for C3 auxiliary outputs."""
 from __future__ import annotations
 
+import logging
 from collections.abc import MutableMapping
 from typing import Any
 
@@ -16,6 +17,8 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DATA_C3_COORDINATOR, DOMAIN
 from .coordinator import C3Coordinator
+
+_LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
@@ -86,14 +89,20 @@ class C3AuxOutEntity(CoordinatorEntity, SwitchEntity):
             ControlOutputAddress.AUX_OUTPUT,
             self._coordinator.aux_on_duration,
         )
-        self._coordinator.c3_panel.control_device(control_command)
+        try:
+            self._coordinator.c3_panel.control_device(control_command)
+        except ConnectionError as ex:
+            _LOGGER.error("Activate of aux %d failure: %s", self._idx, ex)
 
     def turn_off(self, **kwargs: Any) -> None:
         """Deactivate the auxiliary output."""
         control_command = ControlDeviceOutput(
             self._idx, ControlOutputAddress.AUX_OUTPUT, 0
         )
-        self._coordinator.c3_panel.control_device(control_command)
+        try:
+            self._coordinator.c3_panel.control_device(control_command)
+        except ConnectionError as ex:
+            _LOGGER.error("Deactivate of aux %d failure: %s", self._idx, ex)
 
 
 class C3AlarmEntity(CoordinatorEntity, SwitchEntity):
@@ -117,9 +126,9 @@ class C3AlarmEntity(CoordinatorEntity, SwitchEntity):
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
         self._attr_is_on = self._coordinator.status.has_alarm(self._idx)
-        self._attr_extra_state_attributes["last_event_time"] = str(
-            self._coordinator.last_door_event(self._idx).time_second
-        )
+        self._attr_extra_state_attributes[
+            "last_event_time"
+        ] = self._coordinator.last_door_event(self._idx).time_second
         self._attr_extra_state_attributes["last_event"] = repr(
             self._coordinator.last_door_event(self._idx).event_type
         )
@@ -154,5 +163,8 @@ class C3AlarmEntity(CoordinatorEntity, SwitchEntity):
 
     def turn_off(self, **kwargs: Any) -> None:
         """Reset the alarm - all alarms."""
-        self._coordinator.c3_panel.control_device(ControlDeviceCancelAlarms())
-        self._attr_is_on = False
+        try:
+            self._coordinator.c3_panel.control_device(ControlDeviceCancelAlarms())
+            self._attr_is_on = False
+        except ConnectionError as ex:
+            _LOGGER.error("Cancel alarms failure: %s", ex)

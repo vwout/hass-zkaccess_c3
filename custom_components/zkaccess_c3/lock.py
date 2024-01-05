@@ -1,6 +1,7 @@
 """Lock entity implementation for C3 doors."""
 from __future__ import annotations
 
+import logging
 from collections.abc import MutableMapping
 from typing import Any
 
@@ -16,6 +17,8 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DATA_C3_COORDINATOR, DOMAIN
 from .coordinator import C3Coordinator
+
+_LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
@@ -64,10 +67,12 @@ class C3LockEntity(CoordinatorEntity, LockEntity):
         """Handle updated data from the coordinator."""
         if self._coordinator.c3_panel.lock_status(self._idx) == InOutStatus.OPEN:
             self._attr_is_locked = False
+            self._attr_is_locking = False
             self._attr_is_unlocking = False
         elif self._coordinator.c3_panel.lock_status(self._idx) == InOutStatus.CLOSED:
             self._attr_is_locked = True
             self._attr_is_locking = False
+            self._attr_is_unlocking = False
         else:
             self._attr_is_locked = None
 
@@ -100,8 +105,11 @@ class C3LockEntity(CoordinatorEntity, LockEntity):
         control_command = ControlDeviceOutput(
             self._idx, ControlOutputAddress.DOOR_OUTPUT, 0
         )
-        self._coordinator.c3_panel.control_device(control_command)
-        self._attr_is_locking = True
+        try:
+            self._coordinator.c3_panel.control_device(control_command)
+            self._attr_is_locking = True
+        except ConnectionError as ex:
+            _LOGGER.error("Lock of door %d failure: %s", self._idx, ex)
 
     def unlock(self, **kwargs: Any) -> None:
         """Unlock the lock."""
@@ -110,5 +118,8 @@ class C3LockEntity(CoordinatorEntity, LockEntity):
             ControlOutputAddress.DOOR_OUTPUT,
             self._coordinator.unlock_duration,
         )
-        self._coordinator.c3_panel.control_device(control_command)
-        self._attr_is_unlocking = True
+        try:
+            self._coordinator.c3_panel.control_device(control_command)
+            self._attr_is_unlocking = True
+        except ConnectionError as ex:
+            _LOGGER.error("Unlock of door %d failure: %s", self._idx, ex)
