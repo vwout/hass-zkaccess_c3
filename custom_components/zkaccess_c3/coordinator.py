@@ -7,6 +7,7 @@ from typing import Any, TypeVar
 import async_timeout
 import requests
 from c3 import C3, rtlog
+from c3.consts import EventType
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     CONF_SCAN_INTERVAL,
@@ -156,7 +157,12 @@ class C3Coordinator(DataUpdateCoordinator):
                         self._status = log
                         last_record_is_status = True
                     elif isinstance(log, rtlog.EventRecord):
-                        if log.port_nr > 0:
+                        if log.port_nr > 0 and log.event_type not in (
+                            EventType.OPEN_AUX_OUTPUT,
+                            EventType.CLOSE_AUX_OUTPUT,
+                            EventType.AUX_INPUT_DISCONNECT,
+                            EventType.AUX_INPUT_SHORT,
+                        ):
                             self._door_events[log.port_nr] = log
                     updated = True
         except ConnectionError as ex:
