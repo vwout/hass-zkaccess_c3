@@ -27,7 +27,7 @@ In this folder, copy the folder [custom_components/zkaccess_c3](custom_component
 
 Restart Home Assistant.
 
-## Configuration
+### Configuration
 To add the C3 Access Control Panel integration to your installation, do the following:
 - Go to *Configuration* and *Integrations*
 - Click the `+ ADD INTEGRATION` button in the lower right corner.
@@ -41,7 +41,14 @@ The integration works by polling the panel.
 In the device configuration options, the poll interval can be changed.
 The configuration options also allow modification of the activation duration used when unlocking a door, or activating an auxiliary output.
 
-### Troubleshooting
+## Usage
+The states of the devices (lock, auxiliaries) are automatically updated.
+The status however is not in all cases directly available from the panel.
+In case a sensor is connected and configured for each door, the lock represents the actual status of the door.
+When no sensor is configured, the open (unlocked) and closed (locked) state is derived based on commands send and events received.
+For configuration of the panel (door sensor, alarm, card and access control configuration), use the ZKAccess C3 software.
+
+## Troubleshooting
 
 The protocol for communication with the ZKAccess panels is not documented.
 All functionality relies on reverse engineering and the experience is that there is quite some variation on how the different products behave.
