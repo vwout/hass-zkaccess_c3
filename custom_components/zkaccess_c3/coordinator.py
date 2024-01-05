@@ -140,7 +140,10 @@ class C3Coordinator(DataUpdateCoordinator):
         except ValueError as ex:
             raise UpdateFailed(f"Invalid response received: {ex}") from ex
         except Exception as ex:
-            raise UpdateFailed(f"Error communicating with API: {ex}") from ex
+            self.c3_panel.disconnect()
+            raise UpdateFailed(
+                f"Error communicating with API ({ex}). Reconnect ..."
+            ) from ex
 
         updated = False
 
