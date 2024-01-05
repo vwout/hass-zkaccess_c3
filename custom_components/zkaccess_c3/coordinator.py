@@ -149,8 +149,8 @@ class C3Coordinator(DataUpdateCoordinator):
                         self._status = log
                         last_record_is_status = True
                     elif isinstance(log, rtlog.EventRecord):
-                        if log.door_id > 0:
-                            self._door_events[log.door_id] = log
+                        if log.port_nr > 0:
+                            self._door_events[log.port_nr] = log
                     updated = True
         except ConnectionError as ex:
             _LOGGER.error("Realtime log update failed: %s", ex)
