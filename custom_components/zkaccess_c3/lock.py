@@ -1,6 +1,7 @@
 """Lock entity implementation for C3 doors."""
 from __future__ import annotations
 
+from collections.abc import MutableMapping
 from typing import Any
 
 from c3.consts import ControlOutputAddress, InOutStatus
@@ -43,6 +44,17 @@ class C3LockEntity(CoordinatorEntity, LockEntity):
         self._attr_is_locking = None
         self._attr_is_unlocking = None
         self._attr_is_jammed = None
+        self._attr_extra_state_attributes: MutableMapping[str, Any] = {
+            "sensor_type": repr(
+                self._coordinator.c3_panel.door_settings(idx).sensor_type
+            ),
+            "lock_drive_time": self._coordinator.c3_panel.door_settings(
+                idx
+            ).lock_drive_time,
+            "door_alarm_timeout": self._coordinator.c3_panel.door_settings(
+                idx
+            ).door_alarm_timeout,
+        }
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self._coordinator.c3_panel.serial_number)},
         )

@@ -84,6 +84,10 @@ class C3Coordinator(DataUpdateCoordinator):
                 Platform.BINARY_SENSOR: list(range(1, self.c3_panel.nr_aux_in + 1)),
             }
 
+            # Cache door settings
+            if self.c3_panel.nr_of_locks:
+                self.c3_panel.door_settings(1)
+
             device_registry = dr.async_get(hass)
             device_info = {
                 "config_entry_id": self._entry_id,
