@@ -19,6 +19,18 @@ from .const import DATA_C3_COORDINATOR, DOMAIN
 from .coordinator import C3Coordinator
 
 _LOGGER = logging.getLogger(__name__)
+_ICON_AUX_UNKNOWN = "mdi:unknown"
+_ICON_AUX_ON = "mdi:toggle-switch-variant"
+_ICON_AUX_OFF = "mdi:toggle-switch-variant-off"
+_ICON_AUX_IS_ON = {False: _ICON_AUX_OFF, True: _ICON_AUX_ON, None: _ICON_AUX_UNKNOWN}
+_ICON_ALARM_UNKNOWN = "mdi:alarm-light-off-outline"
+_ICON_ALARM_ON = "mdi:alarm-light"
+_ICON_ALARM_OFF = "mdi:alarm-light-off-outline"
+_ICON_ALARM_IS_ON = {
+    False: _ICON_ALARM_OFF,
+    True: _ICON_ALARM_ON,
+    None: _ICON_ALARM_UNKNOWN,
+}
 
 
 async def async_setup_entry(
@@ -80,7 +92,7 @@ class C3AuxOutEntity(CoordinatorEntity, SwitchEntity):
     @property
     def icon(self) -> str | None:
         """Icon of the entity."""
-        return "mdi:door-open"
+        return _ICON_AUX_IS_ON[self._attr_is_on]
 
     def turn_on(self, **kwargs: Any) -> None:
         """Activate the auxiliary output."""
@@ -153,7 +165,7 @@ class C3AlarmEntity(CoordinatorEntity, SwitchEntity):
     @property
     def icon(self) -> str | None:
         """Icon of the entity."""
-        return "mdi:door-sensor"
+        return _ICON_ALARM_IS_ON[self._attr_is_on]
 
     def turn_on(self, **kwargs: Any) -> None:
         """Perform no action.

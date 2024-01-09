@@ -15,6 +15,11 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DATA_C3_COORDINATOR, DOMAIN
 
+_ICON_AUX_UNKNOWN = "mdi:unknown"
+_ICON_AUX_ON = "mdi:toggle-switch-variant"
+_ICON_AUX_OFF = "mdi:toggle-switch-variant-off"
+_ICON_AUX_IS_ON = {False: _ICON_AUX_OFF, True: _ICON_AUX_ON, None: _ICON_AUX_UNKNOWN}
+
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -38,6 +43,7 @@ class C3AuxInEntity(CoordinatorEntity, BinarySensorEntity):
         super().__init__(coordinator, context=idx)
         self._coordinator = coordinator
         self._idx = idx
+        self._attr_is_on = None
         self._attr_device_class = BinarySensorDeviceClass.DOOR.value
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self._coordinator.c3_panel.serial_number)},
@@ -71,4 +77,4 @@ class C3AuxInEntity(CoordinatorEntity, BinarySensorEntity):
     @property
     def icon(self) -> str | None:
         """Icon of the entity."""
-        return "mdi:door-sensor"
+        return _ICON_AUX_IS_ON[self._attr_is_on]

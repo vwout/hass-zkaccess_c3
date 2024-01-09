@@ -19,6 +19,14 @@ from .const import DATA_C3_COORDINATOR, DOMAIN
 from .coordinator import C3Coordinator
 
 _LOGGER = logging.getLogger(__name__)
+_ICON_LOCK_UNKNOWN = "mdi:door"
+_ICON_LOCK_OPEN = "mdi:door-open"
+_ICON_LOCK_CLOSED = "mdi:door-closed-lock"
+_ICON_LOCK_IS_LOCKED = {
+    False: _ICON_LOCK_OPEN,
+    True: _ICON_LOCK_CLOSED,
+    None: _ICON_LOCK_UNKNOWN,
+}
 
 
 async def async_setup_entry(
@@ -98,7 +106,7 @@ class C3LockEntity(CoordinatorEntity, LockEntity):
     @property
     def icon(self) -> str | None:
         """Icon of the entity."""
-        return "mdi:door"
+        return _ICON_LOCK_IS_LOCKED[self._attr_is_locked]
 
     def lock(self, **kwargs: Any) -> None:
         """Lock the lock."""
