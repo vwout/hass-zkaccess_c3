@@ -149,34 +149,35 @@ class C3Coordinator(DataUpdateCoordinator):
 
         updated = False
 
-        try:
-            last_record_is_status = False
-            while not last_record_is_status:
-                logs = self.c3_panel.get_rt_log()
-                for log in logs:
-                    if isinstance(log, rtlog.DoorAlarmStatusRecord):
-                        self._status = log
-                        last_record_is_status = True
-                    elif isinstance(log, rtlog.EventRecord):
-                        if log.port_nr > 0 and log.event_type not in (
-                            EventType.OPEN_AUX_OUTPUT,
-                            EventType.CLOSE_AUX_OUTPUT,
-                            EventType.AUX_INPUT_DISCONNECT,
-                            EventType.AUX_INPUT_SHORT,
-                        ):
-                            self._door_events[log.port_nr] = log
-                    updated = True
-        except ConnectionError as ex:
-            _LOGGER.error("Realtime log update failed: %s", ex)
-
-        if updated:
-            self._poll_timeout_count = 0
-        else:
-            # Disconnect explicitly, so a re-connect can be performed at the next attempt
+        if self.c3_panel.is_connected():
             try:
-                self.c3_panel.disconnect()
-            finally:
-                pass
+                last_record_is_status = False
+                while not last_record_is_status:
+                    logs = self.c3_panel.get_rt_log()
+                    for log in logs:
+                        if isinstance(log, rtlog.DoorAlarmStatusRecord):
+                            self._status = log
+                            last_record_is_status = True
+                        elif isinstance(log, rtlog.EventRecord):
+                            if log.port_nr > 0 and log.event_type not in (
+                                EventType.OPEN_AUX_OUTPUT,
+                                EventType.CLOSE_AUX_OUTPUT,
+                                EventType.AUX_INPUT_DISCONNECT,
+                                EventType.AUX_INPUT_SHORT,
+                            ):
+                                self._door_events[log.port_nr] = log
+                        updated = True
+            except ConnectionError as ex:
+                _LOGGER.error("Realtime log update failed: %s", ex)
+
+            if updated:
+                self._poll_timeout_count = 0
+            else:
+                # Disconnect explicitly, so a re-connect can be performed at the next attempt
+                try:
+                    self.c3_panel.disconnect()
+                finally:
+                    pass
 
         return updated
 
