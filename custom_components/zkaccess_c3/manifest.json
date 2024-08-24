@@ -11,6 +11,6 @@
     "issue_tracker": "https://github.com/vwout/hass-zkaccess_c3/issues",
     "requirements": ["zkaccess_c3==0.0.14"],
     "ssdp": [],
-    "version": "0.0.8",
+    "version": "0.0.9",
     "zeroconf": []
 }
